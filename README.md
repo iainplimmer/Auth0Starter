@@ -1,5 +1,18 @@
 # Oauthtest
 
+www.auth0.com
+
+newzeroriot.eu.auth0.com (Created with google login)
+
+http://www.c-sharpcorner.com/article/angular-4-authentication-with-auth0/?utm_campaign=NG-Newsletter&utm_medium=email&utm_source=NG-Newsletter_208
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.2.1.
 
 ## Development server
