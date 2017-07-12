@@ -5,7 +5,7 @@ declare var Auth0Lock: any;
 
 @Injectable()
 export class Auth {
-    lock = new Auth0Lock("", "newzeroriot.eu.auth0.com", {});
+    lock = new Auth0Lock("gn1uEugZAkvjlRhbNGBBIQq6EFw4mtWM", "newzeroriot.eu.auth0.com", {});
     constructor() {
         this.lock.on("authenticated", authResult => {            
             this.lock.getProfile(authResult.idToken, function (error: any, profile: any) {
