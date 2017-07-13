@@ -1,35 +1,62 @@
-import { Injectable } from "@angular/core";
-import { tokenNotExpired } from 'angular2-jwt';
-
-declare var Auth0Lock: any;
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import 'rxjs/add/operator/filter';
+import * as auth0 from 'auth0-js';
 
 @Injectable()
-export class Auth {
-    lock = new Auth0Lock("gn1uEugZAkvjlRhbNGBBIQq6EFw4mtWM", "newzeroriot.eu.auth0.com", {});
-    constructor() {
-        this.lock.on("authenticated", authResult => {            
-            this.lock.getProfile(authResult.idToken, function (error: any, profile: any) {
-                if (error) {
-                    throw new Error(error);
-                }
-                //Set Profile
-                localStorage.setItem("profile", JSON.stringify(profile));
-                //Set Token
-                localStorage.setItem("id_token", authResult.idToken);
-            })
-        });
-    }
+export class AuthService {
 
-    login() {
-        this.lock.show();
-    }
+  auth0 = new auth0.WebAuth({
+    clientID: 'gn1uEugZAkvjlRhbNGBBIQq6EFw4mtWM',
+    domain: 'newzeroriot.eu.auth0.com',
+    responseType: 'token id_token',
+    audience: 'https://newzeroriot.eu.auth0.com/userinfo',
+    redirectUri: 'http://localhost:4200',      
+    scope: 'openid'
+  });
 
-    isAuthenticated() {
-        return tokenNotExpired("id_token");
-    }
+  constructor() {}
 
-    logout() {
-        localStorage.removeItem("id_token");
-    }
+  public login(): void {
+    this.auth0.authorize();
+  }
+
+    // ...
+  public handleAuthentication(): void {
+    this.auth0.parseHash((err, authResult) => {
+      if (authResult && authResult.accessToken && authResult.idToken) {
+        window.location.hash = '';
+        this.setSession(authResult);
+        //this.router.navigate(['/home']);
+      } else if (err) {
+        //this.router.navigate(['/home']);
+        console.log(err);
+      }
+    });
+  }
+
+  private setSession(authResult): void {
+    // Set the time that the access token will expire at
+    const expiresAt = JSON.stringify((authResult.expiresIn * 1000) + new Date().getTime());
+    localStorage.setItem('access_token', authResult.accessToken);
+    localStorage.setItem('id_token', authResult.idToken);
+    localStorage.setItem('expires_at', expiresAt);
+  }
+
+  public logout(): void {
+    // Remove tokens and expiry time from localStorage
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('id_token');
+    localStorage.removeItem('expires_at');
+    // Go back to the home route
+    //this.router.navigate(['/']);
+  }
+
+  public isAuthenticated(): boolean {
+    // Check whether the current time is past the
+    // access token's expiry time
+    const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
+    return new Date().getTime() < expiresAt;
+  }
 
 }

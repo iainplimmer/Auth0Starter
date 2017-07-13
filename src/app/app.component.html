@@ -5,5 +5,5 @@
   </h1>  
 </div>
 
-<button class="btn btn-primary" *ngIf="!Auth.isAuthenticated()" (click)="Auth.login()">Login</button>
-<button class="btn btn-primary" *ngIf="Auth.isAuthenticated()" (click)="Auth.logout()">Logout</button>
+<button class="btn btn-primary" *ngIf="!auth.isAuthenticated()" (click)="auth.login()">Login</button>
+<button class="btn btn-primary" *ngIf="auth.isAuthenticated()" (click)="auth.logout()">Logout</button>
